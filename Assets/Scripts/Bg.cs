@@ -17,10 +17,7 @@ public class Bg : MonoBehaviour
     private const int mapHeight = 15;
     private const int mapWidth = 15;
 
-    private const int defaultMinerCount = 99;
-
-    private bool isLeftButtonDown = false;
-    private bool isRightButtonDown = false;
+    private int defaultMinerCount = 90;
 
     private float deltaTime = 0;
 
@@ -34,6 +31,7 @@ public class Bg : MonoBehaviour
     public Text textBigStatus;
     public Text textTime;
     public Text textMinersLeft;
+    public Dropdown minersSet;
 
     public Tilemap map;
     public Tile[] tiles;
@@ -50,47 +48,14 @@ public class Bg : MonoBehaviour
     {
         if (status == statusReady || status == statusRun)
         {
-            int entryStatus = status;
             if (Input.GetMouseButtonDown(0))
             {
-                isLeftButtonDown = true;
+
+                status = LeftButtonDown();
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                isRightButtonDown = true;
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-                if (isLeftButtonDown)
-                {
-                    if (isRightButtonDown)
-                    {
-                        isRightButtonDown = false;
-                        status = TwoButtonDown();
-                    }
-                    else
-                    {
-                        status = LeftButtonDown();
-                    }
-                    isLeftButtonDown = false;
-                }
-            }
-            else if (Input.GetMouseButtonUp(1))
-            {
-                if (isRightButtonDown)
-                {
-                    if (isLeftButtonDown)
-                    {
-                        isLeftButtonDown = false;
-                        status = TwoButtonDown();
-                    }
-                    else
-                    {
-                        RightButtonDown();
-                    }
-                    isRightButtonDown = false;
-                }
-
+                RightButtonDown();
             }
             if (status == statusFail)
             {
@@ -179,7 +144,7 @@ public class Bg : MonoBehaviour
         }
         if (IsOpen(pos))
         {
-            return status;
+            return TwoButtonDown();
         }
         if (tagMap[pos.x, pos.y, pos.z] != indexEmpty)
         {
@@ -234,6 +199,12 @@ public class Bg : MonoBehaviour
     {
         ResetData();
         RenderBg();
+    }
+
+    public void SetMiners()
+    {
+        defaultMinerCount = 90 - minersSet.value * 10;
+        Restart();
     }
 
     private void ResetData()
